@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import { CityContext } from 'components/CityProvider/CityProvider';
+import Decision from 'components/Decision';
 
 const Question = ({ id, onSave, onSkip, onBack, value }) => {
   const { firebase, currentUser, questionnaire } = useContext(CityContext);
@@ -27,6 +28,8 @@ const Question = ({ id, onSave, onSkip, onBack, value }) => {
         <span>{id + 1}. </span>
         <span>{question}</span>
       </p>
+
+      <Decision />
 
       <FormGroup tag="fieldset">
         <FormGroup check className="my-2">
