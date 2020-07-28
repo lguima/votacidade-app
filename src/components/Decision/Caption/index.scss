@@ -1,0 +1,14 @@
+.decision {
+  .caption {
+    font-size: 1.1em;
+    font-weight: 600;
+  
+    &.agree {
+      color: #18652a;
+    }
+  
+    &.disagree {
+      color: #5f394d;
+    }
+  }
+}
