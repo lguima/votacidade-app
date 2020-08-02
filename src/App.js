@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import firebase from 'firebase/app';
-import { Container } from 'reactstrap';
 
+import { AppContext } from 'libs/contextLib';
+import Routes from './routes/Routes';
 import SignInForm from './components/User/SignInForm';
-import Routes from './Routes';
+import ErrorBoundary from 'components/ErrorBoundary';
 
 const App = () => {
   const [lookingForUser, setLookingForUser] = useState(true);
   const [user, setUser] = useState(null);
 
+  const [isAuthenticated, userHasAuthenticated] = useState(false);
+
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       setLookingForUser(false);
       setUser(user);
+      userHasAuthenticated(true);
     });
   }, []);
 
@@ -25,12 +29,14 @@ const App = () => {
     return <SignInForm />;
   }
 
-  return (
-    <Container data-testid="app">
-      <Router>
+  return isAuthenticated ? (
+    <ErrorBoundary>
+      <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated }}>
         <Routes />
-      </Router>
-    </Container>
+      </AppContext.Provider>
+    </ErrorBoundary>
+  ) : (
+    <Redirect to="/login" />
   );
 };
 
