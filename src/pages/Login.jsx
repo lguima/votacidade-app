@@ -1,24 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col } from 'reactstrap';
+import { Col, Container, Row, TabContent, TabPane } from 'reactstrap';
 
-import { Container } from 'reactstrap';
 import SignInForm from 'components/User/SignInForm';
 import SignUpForm from 'components/User/SignUpForm';
 import ForgotPassword from 'components/User/ForgotPassword';
 
-import { Box } from 'components/User/User.styled';
-import { Tabs, TabButton } from 'components/Tabs/Tabs';
 import Background from 'components/Background/Background';
 import background from 'assets/img/splashscreen.png';
+import { Box } from 'components/User/User.styled';
+import NavPillsButtonGroup from 'components/NavPillsButtonGroup/NavPillsButtonGroup';
+import NavPillsButton from 'components/NavPillsButton/NavPillsButton';
 
 const Login = ({ shouldComplete, user }) => {
   const [showPasswordRecovery, setShowPasswordRecovery] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
   const [errorMessage, updateErrorMessage] = useState(null);
+
+  const [activeTab, setActiveTab] = useState('signInForm');
+
+  const toggle = tab => {
+    if (activeTab !== tab) setActiveTab(tab);
+  }
 
   useEffect(() => {
     if (shouldComplete) {
-      setIsLogin(false);
+      setActiveTab('signInForm');
     }
   }, [shouldComplete]);
 
@@ -33,22 +38,12 @@ const Login = ({ shouldComplete, user }) => {
         <Row className="pt-5 mb-5 align-items-center justify-content-center">
           <Col xs="12" sm="8" md="6" lg="4">
             <Box>
-              <Tabs>
-                <TabButton active={isLogin} onClick={() => setIsLogin(true)}>
-                  {isLogin && <span>✓ </span>}
-                  <span>Entrar</span>
-                </TabButton>
-                <TabButton
-                  active={!isLogin}
-                  onClick={() => setIsLogin(false)}
-                  data-testid="signup-button"
-                >
-                  {!isLogin && <span>✓ </span>}
-                  <span>Cadastrar</span>
-                </TabButton>
-              </Tabs>
-              {isLogin && (
-                <>
+              <NavPillsButtonGroup className="justify-content-center mb-4" size="sm">
+                <NavPillsButton toggleTabId="signInForm" toggle={toggle} activeTab={activeTab}>Entrar</NavPillsButton>
+                <NavPillsButton toggleTabId="signUpForm" toggle={toggle} activeTab={activeTab}>Cadastrar</NavPillsButton>
+              </NavPillsButtonGroup>
+              <TabContent activeTab={activeTab}>
+                <TabPane tabId="signInForm">
                   {showPasswordRecovery ? (
                     <ForgotPassword
                       hideForgotPassword={() => setShowPasswordRecovery(false)}
@@ -63,12 +58,11 @@ const Login = ({ shouldComplete, user }) => {
                       />
                     </>
                   )}
-                </>
-              )}
-
-              {!isLogin && (
-                <SignUpForm onBackClick={() => setIsLogin(true)} user={user} />
-              )}
+                </TabPane>
+                <TabPane tabId="signUpForm">
+                  <SignUpForm onBackClick={() => setActiveTab('signInForm')} user={user} />
+                </TabPane>
+              </TabContent>
             </Box>
           </Col>
         </Row>
